@@ -19,7 +19,7 @@ APBlockKit is a simple block-Handle Util
 
 * -(void)unObserveEvent:(NSString *)aName object:(id)anObject;
 
-###KVO Observing
+###KeyValueObserving 
 
 ###### Tip1: You need to unObserve the KeyPath that you have set to observed to prevent crash : kvo_objectRef was deallocated while key value observers were still registered with it.
 
