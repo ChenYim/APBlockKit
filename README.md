@@ -1,5 +1,5 @@
 # APBlockKit
-APBlockKit is a simple block-Handle Util.
+APBlockKit is a simple Block-handle Util.
 
 * [Thanks:https://github.com/refusebt/RFEvent]  
 * [Swift Version:https://github.com/LucioLee/LucioClosureKit]
