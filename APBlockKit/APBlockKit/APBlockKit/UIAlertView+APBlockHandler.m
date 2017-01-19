@@ -13,56 +13,57 @@ static const char UIAlertView_key_didPresent;
 static const char UIAlertView_key_willDismiss;
 static const char UIAlertView_key_didDismiss;
 static const char UIAlertView_key_shouldEnableFirstOtherButton;
+static const char UIAlertView_key_shouldDismissWithClickButtonIndex;
 
 #import "UIAlertView+APBlockHandler.h"
 #import <objc/runtime.h>
 
 @implementation UIAlertView (APBlockHandler)
 
-+ (UIAlertView *)alertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSArray *)otherButtonTitles Click:(APAlertView_block_self_index)clickBlk
++ (UIAlertView *)ap_alertViewWithTitle:(NSString *)title message:(NSString *)message cancelButtonTitle:(NSString *)cancelButtonTitle otherButtonTitles:(NSArray *)otherButtonTitles Click:(APAlertView_block_self_index)clickBlk
 {
     UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:cancelButtonTitle otherButtonTitles:nil];
     
     for(NSString *buttonTitle in otherButtonTitles)
         [alerView addButtonWithTitle:buttonTitle];
     
-    [alerView handlerClickedButton:clickBlk];
+    [alerView ap_handlerClickedButton:clickBlk];
     
     return alerView;
 }
 
-- (void)handlerClickedButton:(APAlertView_block_self_index)aBlock
+- (void)ap_handlerClickedButton:(APAlertView_block_self_index)aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_clicked, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
-- (void)handlerCancel:(void (^)(UIAlertView *alertView))aBlock
+- (void)ap_handlerCancel:(void (^)(UIAlertView *alertView))aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_cancel, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
-- (void)handlerWillPresent:(void (^)(UIAlertView *alertView))aBlock
+- (void)ap_handlerWillPresent:(void (^)(UIAlertView *alertView))aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_willPresent, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-- (void)handlerDidPresent:(void (^)(UIAlertView *alertView))aBlock
+- (void)ap_handlerDidPresent:(void (^)(UIAlertView *alertView))aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_didPresent, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
-- (void)handlerWillDismiss:(APAlertView_block_self_index)aBlock
+- (void)ap_handlerWillDismiss:(APAlertView_block_self_index)aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_willDismiss, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
-- (void)handlerDidDismiss:(APAlertView_block_self_index)aBlock
+- (void)ap_handlerDidDismiss:(APAlertView_block_self_index)aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_didDismiss, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
-- (void)handlerShouldEnableFirstOtherButton:(APAlertView_block_shouldEnableFirstOtherButton)aBlock
+- (void)ap_handlerShouldEnableFirstOtherButton:(APAlertView_block_shouldEnableFirstOtherButton)aBlock
 {
     self.delegate = self;
     objc_setAssociatedObject(self, &UIAlertView_key_shouldEnableFirstOtherButton, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -131,19 +132,51 @@ static const char UIAlertView_key_shouldEnableFirstOtherButton;
 
 #pragma mark - UIAlertView
 
-- (void)showWithDuration:(NSTimeInterval)i
+- (void)ap_showWithDuration:(NSTimeInterval)interval
 {
-    [NSTimer scheduledTimerWithTimeInterval:i
+    [NSTimer scheduledTimerWithTimeInterval:interval
                                      target:self
-                                   selector:@selector(xyDismiss)
+                                   selector:@selector(ap_selfDismiss)
                                    userInfo:self
                                     repeats:NO];
     [self show];
 }
 
-- (void)xyDismiss
+- (void)ap_selfDismiss
 {
     [self dismissWithClickedButtonIndex:0 animated:YES];
+}
+
+
+@end
+
+#pragma mark - APAlertView
+
+@implementation APAlertView
+
+//-(void)dealloc
+//{
+//    NSLog(@"APAlertView dealloc%@",self);
+//}
+
+- (void)ap_handlerShouldDismissWithClickButtonIndex:(APAlertView_block_self_shouldDismissWithClickButtonIndex)aBlock
+{
+    self.delegate = self;
+    objc_setAssociatedObject(self, &UIAlertView_key_shouldDismissWithClickButtonIndex, aBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+#pragma mark - Over Write
+-(void)dismissWithClickedButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated
+{
+    APAlertView_block_self_shouldDismissWithClickButtonIndex block = objc_getAssociatedObject(self, &UIAlertView_key_shouldDismissWithClickButtonIndex);
+    BOOL shouldDismiss = YES;
+    if (block) {
+        shouldDismiss = block(self, buttonIndex);
+    }
+    
+    if (shouldDismiss) {
+        [super dismissWithClickedButtonIndex:buttonIndex animated:animated];
+    }
 }
 
 

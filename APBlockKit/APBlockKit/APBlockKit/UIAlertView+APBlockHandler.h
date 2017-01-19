@@ -11,25 +11,33 @@
 typedef void(^APAlertView_block_self_index)(UIAlertView *alertView, NSInteger buttonIndex);
 typedef void(^APAlertView_block_self)(UIAlertView *alertView);
 typedef BOOL(^APAlertView_block_shouldEnableFirstOtherButton)(UIAlertView *alertView);
+typedef BOOL(^APAlertView_block_self_shouldDismissWithClickButtonIndex)(UIAlertView *alertView, NSInteger buttonIndex);
 
 @interface UIAlertView (APBlockHandler)<UIAlertViewDelegate>
 
-+ (UIAlertView *)alertViewWithTitle:(NSString *)title
++ (UIAlertView *)ap_alertViewWithTitle:(NSString *)title
                             message:(NSString *)message
                   cancelButtonTitle:(NSString *)cancelButtonTitle
                   otherButtonTitles:(NSArray *)otherButtonTitles
                               Click:(APAlertView_block_self_index)clickBlk;
 
-- (void)handlerClickedButton:(APAlertView_block_self_index)aBlock;
-- (void)handlerCancel:(APAlertView_block_self)aBlock;
-- (void)handlerWillPresent:(APAlertView_block_self)aBlock;
-- (void)handlerDidPresent:(APAlertView_block_self)aBlock;
-- (void)handlerWillDismiss:(APAlertView_block_self_index)aBlock;
-- (void)handlerDidDismiss:(APAlertView_block_self_index)aBlock;
-- (void)handlerShouldEnableFirstOtherButton:(APAlertView_block_shouldEnableFirstOtherButton)aBlock;
+- (void)ap_handlerClickedButton:(APAlertView_block_self_index)aBlock;
+- (void)ap_handlerCancel:(APAlertView_block_self)aBlock;
+- (void)ap_handlerWillPresent:(APAlertView_block_self)aBlock;
+- (void)ap_handlerDidPresent:(APAlertView_block_self)aBlock;
+- (void)ap_handlerWillDismiss:(APAlertView_block_self_index)aBlock;
+- (void)ap_handlerDidDismiss:(APAlertView_block_self_index)aBlock;
+- (void)ap_handlerShouldEnableFirstOtherButton:(APAlertView_block_shouldEnableFirstOtherButton)aBlock;
+
 
 // 延时消失
-- (void)showWithDuration:(NSTimeInterval)i;
+- (void)ap_showWithDuration:(NSTimeInterval)i;
+
+@end
+
+@interface APAlertView : UIAlertView
+
+- (void)ap_handlerShouldDismissWithClickButtonIndex:(APAlertView_block_self_shouldDismissWithClickButtonIndex)aBlock;
 
 @end
 
