@@ -3,7 +3,7 @@
 //  TestApp
 //
 //  Created by ChenYim on 15/12/21.
-//  Copyright © 2015年 9Sky. All rights reserved.
+//  Copyright © 2015年 __companyName__. All rights reserved.
 //
 static const char APTableViewKey_APBlockHandler;
 

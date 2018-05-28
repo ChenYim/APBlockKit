@@ -3,7 +3,7 @@
 //  TestApp
 //
 //  Created by ChenYim on 15/9/2.
-//  Copyright (c) 2015年 9Sky. All rights reserved.
+//  Copyright (c) 2015年 __companyName__. All rights reserved.
 //
 
 static const char UIActionSheet_key_clicked;
